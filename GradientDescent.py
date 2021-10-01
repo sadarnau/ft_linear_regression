@@ -1,5 +1,6 @@
 import pandas
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import figure
 
 class GradientDescent:
 
@@ -68,20 +69,23 @@ class GradientDescent:
 
 if __name__ == "__main__":
 
-    fig = plt.figure()
-    fig.add_subplot(222)
+    fig = figure(figsize=(20, 15), dpi=80)
+    fig.add_subplot(221)
 
-    learn = GradientDescent('data.csv')
+    learn = GradientDescent('files/data.csv')
     learn.doGradientDescent()
     
     print(f'\ntheta0 = {learn.theta0} and theta1 = {learn.theta1}\n')
 
     plt.plot(learn.normalizedX, learn.normalizedY, 'bo')
-    # plt.plot(learn.normalizedX, learn.estimatePrice(learn.normalizedX, learn.normalizedTheta0, learn.normalizedTheta1))
+    plt.ylabel('normalized price')
+    plt.xlabel('normalized mileage')
 
-    fig.add_subplot(221)
+    fig.add_subplot(222)
     plt.plot(learn.x, learn.y, 'bo')
     plt.plot(learn.x, learn.estimatePrice(learn.x, learn.theta0, learn.theta1))
+    plt.ylabel('price')
+    plt.xlabel('mileage (Km)')
 
     # fig.add_subplot(212)
     # plt.plot(learn.normalizedX, learn.normalizedY, 'bo')
