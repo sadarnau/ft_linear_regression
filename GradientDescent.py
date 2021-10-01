@@ -1,4 +1,4 @@
-import pandas, numpy
+import pandas, numpy, os.path
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure
 
@@ -22,13 +22,20 @@ class GradientDescent:
         self.theta1History = []
     
     def processData(self, pathData):
-        # TO DO : to protect
+        if not os.path.isfile(pathData):
+            print("Wrong path for the data file")
+            exit(1)
+
         self.data = pandas.read_csv(pathData)
         self.x = self.data['km'].values
         self.y = self.data['price'].values
+        if (len(self.x) != len(self.y)) or len(self.x) == 0:
+            print("Data file is no gooood")
+            exit(1)
+
         self.normalizedX = self.normalizer(self.x)
-        self.normalizedY = self.normalizer(self.y)
-        self.lenData = len(self.x)      # TO DO : PROTECT !!!
+        self.normalizedY = self.normalizer(self.y)        
+        self.lenData = len(self.x)
 
     def normalizer(self, values):
 
@@ -37,7 +44,6 @@ class GradientDescent:
         return normalizedValues
 
     def denormalizer(self):
-        # TO DO : take off useless bracket
         self.theta1 = (max(self.y) - min(self.y)) * self.normalizedTheta1 / (max(self.x) - min(self.x))
         self.theta0 = min(self.y) + ((max(self.y) - min(self.y)) * self.normalizedTheta0) + self.theta1 * (1 - min(self.x))
 
@@ -54,8 +60,13 @@ class GradientDescent:
             tot += (self.estimatePrice(self.normalizedX[i], self.normalizedTheta0, self.normalizedTheta1) - self.normalizedY[i])**2
 
         cost = tot / (2 * self.lenData)
-
         self.costHistory.append(cost)
+
+    def saveThetas(self):
+        with open('files/thetas.txt', 'w') as f:
+            f.write(str(self.theta0))
+            f.write('\n')
+            f.write(str(self.theta1))
 
     def doGradientDescent(self):
 
@@ -64,8 +75,6 @@ class GradientDescent:
             total2 = 0
 
             for j in range(self.lenData):
-                
-                # TO DO : take off useless bracket
                 total1 -= self.estimatePrice(self.normalizedX[j], self.normalizedTheta0, self.normalizedTheta1) \
                     - self.normalizedY[j]
                 total2 -= (self.estimatePrice(self.normalizedX[j], self.normalizedTheta0, self.normalizedTheta1) \
@@ -81,6 +90,7 @@ class GradientDescent:
                 plt.plot(self.normalizedX, self.estimatePrice(self.normalizedX, self.normalizedTheta0, self.normalizedTheta1))
 
         self.denormalizer()
+        self.saveThetas()
 
 if __name__ == "__main__":
 
