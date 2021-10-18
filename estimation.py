@@ -30,4 +30,7 @@ miles = input("Enter mileage : ")   # TO DO : PROTECT ONLY INT
 
 estPrice = estimatePrice(int(miles))
 
-print("\nThe estimated price is :", estPrice, '\n')
+if estPrice < 0:
+    print('\nSorry, your car is worth nothing...\n')
+else:
+    print("\nThe estimated price is :", estPrice, '\n')

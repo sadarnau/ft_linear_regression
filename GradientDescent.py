@@ -1,6 +1,8 @@
-import pandas, numpy, os.path
-import matplotlib.pyplot as plt
-from matplotlib.pyplot import figure
+import pandas, os.path
+# import matplotlib.pyplot as plt
+# from matplotlib.pyplot import figure
+import plotly.graph_objects as go
+import plotly.express as px
 
 class GradientDescent:
 
@@ -86,46 +88,66 @@ class GradientDescent:
             self.theta1History.append(self.normalizedTheta1)
             self.addCostHistory()
 
-            if i < 500 or (i > 500 and i < 800 and i % 10 == 0) or (i > 800 and i % 25 == 0):
-                plt.plot(self.normalizedX, self.estimatePrice(self.normalizedX, self.normalizedTheta0, self.normalizedTheta1))
-
         self.denormalizer()
         self.saveThetas()
 
 if __name__ == "__main__":
 
-    fig = figure(figsize=(20, 15), dpi=80)
-    fig.add_subplot(221)
-
     learn = GradientDescent('files/data.csv')
     learn.doGradientDescent()
     
+    # fig = px.scatter(x=learn.x, y=learn.y)
+
+    # create a list of frames
+    frames = []
+    points = go.Scatter(x=learn.normalizedX, y=learn.normalizedY, mode='markers')
+
+    for i in range(len(learn.theta0History)):
+
+        line = go.Scatter(x=learn.normalizedX, y=learn.estimatePrice(learn.normalizedX, learn.theta0History[i], learn.theta1History[i]))    # create the button
+
+        button = { "type": "buttons", "buttons": [{ "label": "Play", "method": "animate", "args": [None, {"frame": {"duration": 1}}]}]}
+
+        layout = go.Layout(updatemenus=[button], title_text=f"Gradient Descent Step {i}")    # create a frame object
+
+        frame = go.Frame(data=[points, line], layout=go.Layout(title_text=f"Gradient Descent Step {i}",
+                            xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1])))
+
+        frames.append(frame)
+    
+    # combine everything together
+    fig = go.Figure(data=[points, line],
+                    frames=frames,
+                    layout = layout)
+                                    
+    fig.show()
+
     print(f'\ntheta0 = {learn.theta0} and theta1 = {learn.theta1}\n')
     
-    plt.title('Iterations of the gradient descent algorithm')
-    plt.plot(learn.normalizedX, learn.normalizedY, 'bo')
-    plt.ylabel('Normalized price')
-    plt.xlabel('Normalized mileage')
+    # plt.title('Iterations of the gradient descent algorithm')
+    # plt.plot(learn.normalizedX, learn.normalizedY, 'bo')
+    # plt.ylabel('Normalized price')
+    # plt.xlabel('Normalized mileage')
 
-    fig.add_subplot(222)
-    plt.title('The linear regression found')
-    plt.plot(learn.x, learn.y, 'bo')
-    plt.plot(learn.x, learn.estimatePrice(learn.x, learn.theta0, learn.theta1))
-    plt.ylabel('Price')
-    plt.xlabel('Mileage (Km)')
+    # fig.add_subplot(222)
+    # plt.title('The linear regression found')
+    # plt.plot(learn.x, learn.y, 'bo')
+    # plt.plot(learn.x, learn.estimatePrice(learn.x, learn.theta0, learn.theta1))
+    # plt.ylabel('Price')
+    # plt.xlabel('Mileage (Km)')
 
-    fig.add_subplot(212)
-    color='tab:blue'
-    plt.plot(learn.theta0History, label='$\\theta_{0}$', linestyle='-', color=color)
-    plt.plot(learn.theta1History, label='$\\theta_{1}$', linestyle='--', color=color)
-    plt.xlabel('Iterations'); plt.ylabel('$\\theta$', color=color)
-    plt.tick_params(axis='y', labelcolor=color)
+    # fig.add_subplot(212)
+    # color='tab:blue'
+    # plt.plot(learn.theta0History, label='$\\theta_{0}$', linestyle='-', color=color)
+    # plt.plot(learn.theta1History, label='$\\theta_{1}$', linestyle='--', color=color)
+    # plt.xlabel('Iterations'); plt.ylabel('$\\theta$', color=color)
+    # plt.tick_params(axis='y', labelcolor=color)
  
-    color='tab:red'
-    ax2 = plt.twinx()
-    ax2.plot(learn.costHistory, label='Cost function', color=color)
-    ax2.set_title('Values of $\\theta$ and cost function over iterations')
-    ax2.set_ylabel('Cost', color=color)
-    fig.legend(bbox_to_anchor=(0.9, 0.4))
+    # color='tab:red'
+    # ax2 = plt.twinx()
+    # ax2.plot(learn.costHistory, label='Cost function', color=color)
+    # ax2.set_title('Values of $\\theta$ and cost function over iterations')
+    # ax2.set_ylabel('Cost', color=color)
+    # fig.legend(bbox_to_anchor=(0.9, 0.4))
 
-    plt.show()
+    # plt.show()
