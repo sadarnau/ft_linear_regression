@@ -3,6 +3,7 @@ import pandas, os.path
 # from matplotlib.pyplot import figure
 import plotly.graph_objects as go
 import plotly.express as px
+from plotly.subplots import make_subplots
 
 class GradientDescent:
 
@@ -97,18 +98,22 @@ if __name__ == "__main__":
     learn.doGradientDescent()
     
     # fig = px.scatter(x=learn.x, y=learn.y)
+    # fig = go.Scatter(x=learn.x, y=learn.y, mode='markers')
 
     # create a list of frames
     frames = []
+
+    test = go.Scatter(x=learn.x, y=learn.y, xaxis="x2", yaxis="y2", mode='markers')
     points = go.Scatter(x=learn.normalizedX, y=learn.normalizedY, mode='markers')
 
     for i in range(len(learn.theta0History)):
 
         line = go.Scatter(x=learn.normalizedX, y=learn.estimatePrice(learn.normalizedX, learn.theta0History[i], learn.theta1History[i]))    # create the button
 
-        button = { "type": "buttons", "buttons": [{ "label": "Play", "method": "animate", "args": [None, {"frame": {"duration": 1}}]}]}
+        button = { "type": "buttons", "buttons": [{ "label": "Play", "method": "animate", "args": [None, {"frame": {"duration": 10}}]}]}
 
-        layout = go.Layout(updatemenus=[button], title_text=f"Gradient Descent Step {i}")    # create a frame object
+        layout = go.Layout(updatemenus=[button], title_text=f"Gradient Descent Step {i}", xaxis=dict(domain=[0, 0.6]),
+                            xaxis2=dict(domain=[0.65, 1]))    # create a frame object
 
         frame = go.Frame(data=[points, line], layout=go.Layout(title_text=f"Gradient Descent Step {i}",
                             xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1])))
@@ -116,10 +121,8 @@ if __name__ == "__main__":
         frames.append(frame)
     
     # combine everything together
-    fig = go.Figure(data=[points, line],
-                    frames=frames,
-                    layout = layout)
-                                    
+    fig = go.Figure(data=[points, line, test], frames=frames, layout = layout)
+
     fig.show()
 
     print(f'\ntheta0 = {learn.theta0} and theta1 = {learn.theta1}\n')
