@@ -1,8 +1,5 @@
 import pandas, os.path
-# import matplotlib.pyplot as plt
-# from matplotlib.pyplot import figure
 import plotly.graph_objects as go
-import plotly.express as px
 from plotly.subplots import make_subplots
 
 class GradientDescent:
@@ -92,65 +89,54 @@ class GradientDescent:
         self.denormalizer()
         self.saveThetas()
 
+    def showGraph(self):
+        # create a list of frames
+        frames = []
+        
+        fig = make_subplots(rows=1, cols=2)
+        
+        points = go.Scatter(x=self.normalizedX, y=self.normalizedY, mode='markers',showlegend=False)
+
+        for i in range(len(self.theta0History)):
+
+            line = go.Scatter(x=self.normalizedX, y=self.estimatePrice(self.normalizedX, self.theta0History[i], self.theta1History[i]), showlegend=False)
+
+            button = { "type": "buttons", "buttons": [{ "label": "Play", "method": "animate", "args": [None, {"frame": {"duration": 1}}]}]}
+
+            layout = go.Layout(updatemenus=[button], title_text=f"Gradient Descent Step {i}")
+
+            frame = go.Frame(data=[points, line], layout=go.Layout(title_text=f"Gradient Descent Step {i}",
+                                xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1])))
+
+            frames.append(frame)
+        
+        # combine everything together
+        fig = go.Figure(data=[points, line], frames=frames, layout = layout)
+        fig.set_subplots(rows=2, cols=2, specs=[[{}, {}],[{"colspan": 2, "secondary_y": True}, None]],
+            subplot_titles=("iterations", "Linear regression applyed to the dataset", 'Values of thetas and cost function over iterations'),
+            horizontal_spacing=0.1, vertical_spacing=0.05)
+
+
+        fig.add_trace(go.Scatter(x=self.x, y=self.y, mode='markers',showlegend=False), row=1, col=2)
+        fig.add_trace(go.Scatter(x=self.x, y=self.estimatePrice(self.x, self.theta0, self.theta1),showlegend=False), row=1, col=2)
+        fig.update_xaxes(title_text="Mileage (km)", row=1, col=2)
+        fig.update_yaxes(title_text="Price ($)", row=1, col=2)
+
+
+        fig.add_trace(go.Scatter(name="Cost function", y=self.costHistory), row=2, col=1, secondary_y=False)
+        fig.add_trace(go.Scatter(name="Theta0",y=self.theta0History), row=2, col=1, secondary_y=True)
+        fig.add_trace(go.Scatter(name="Theta1",y=self.theta1History), row=2, col=1, secondary_y=True)
+        fig.update_xaxes(range=[-10, 2050], row=2, col=1,title_text="Iterations")
+        fig.update_yaxes(title_text="Cost", secondary_y=False)
+        fig.update_yaxes(title_text="Theta value", secondary_y=True)
+
+        fig.update_layout(legend=dict( y=0.25, x=0.75))
+        fig.show()
+
 if __name__ == "__main__":
 
     learn = GradientDescent('files/data.csv')
     learn.doGradientDescent()
-    
-    # fig = px.scatter(x=learn.x, y=learn.y)
-    # fig = go.Scatter(x=learn.x, y=learn.y, mode='markers')
-
-    # create a list of frames
-    frames = []
-
-    test = go.Scatter(x=learn.x, y=learn.y, xaxis="x2", yaxis="y2", mode='markers')
-    points = go.Scatter(x=learn.normalizedX, y=learn.normalizedY, mode='markers')
-
-    for i in range(len(learn.theta0History)):
-
-        line = go.Scatter(x=learn.normalizedX, y=learn.estimatePrice(learn.normalizedX, learn.theta0History[i], learn.theta1History[i]))    # create the button
-
-        button = { "type": "buttons", "buttons": [{ "label": "Play", "method": "animate", "args": [None, {"frame": {"duration": 10}}]}]}
-
-        layout = go.Layout(updatemenus=[button], title_text=f"Gradient Descent Step {i}", xaxis=dict(domain=[0, 0.6]),
-                            xaxis2=dict(domain=[0.65, 1]))    # create a frame object
-
-        frame = go.Frame(data=[points, line], layout=go.Layout(title_text=f"Gradient Descent Step {i}",
-                            xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1])))
-
-        frames.append(frame)
-    
-    # combine everything together
-    fig = go.Figure(data=[points, line, test], frames=frames, layout = layout)
-
-    fig.show()
+    learn.showGraph()
 
     print(f'\ntheta0 = {learn.theta0} and theta1 = {learn.theta1}\n')
-    
-    # plt.title('Iterations of the gradient descent algorithm')
-    # plt.plot(learn.normalizedX, learn.normalizedY, 'bo')
-    # plt.ylabel('Normalized price')
-    # plt.xlabel('Normalized mileage')
-
-    # fig.add_subplot(222)
-    # plt.title('The linear regression found')
-    # plt.plot(learn.x, learn.y, 'bo')
-    # plt.plot(learn.x, learn.estimatePrice(learn.x, learn.theta0, learn.theta1))
-    # plt.ylabel('Price')
-    # plt.xlabel('Mileage (Km)')
-
-    # fig.add_subplot(212)
-    # color='tab:blue'
-    # plt.plot(learn.theta0History, label='$\\theta_{0}$', linestyle='-', color=color)
-    # plt.plot(learn.theta1History, label='$\\theta_{1}$', linestyle='--', color=color)
-    # plt.xlabel('Iterations'); plt.ylabel('$\\theta$', color=color)
-    # plt.tick_params(axis='y', labelcolor=color)
- 
-    # color='tab:red'
-    # ax2 = plt.twinx()
-    # ax2.plot(learn.costHistory, label='Cost function', color=color)
-    # ax2.set_title('Values of $\\theta$ and cost function over iterations')
-    # ax2.set_ylabel('Cost', color=color)
-    # fig.legend(bbox_to_anchor=(0.9, 0.4))
-
-    # plt.show()

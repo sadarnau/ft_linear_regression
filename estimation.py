@@ -26,9 +26,13 @@ def estimatePrice(mileage):
 
 theta0, theta1 = getThetas()
 
-miles = input("Enter mileage : ")   # TO DO : PROTECT ONLY INT
+miles = input("Enter mileage : ")
 
-estPrice = estimatePrice(int(miles))
+try:
+    estPrice = estimatePrice(int(miles))
+except:
+    print("\nOnly numbers plzz\n")
+    exit(1)
 
 if estPrice < 0:
     print('\nSorry, your car is worth nothing...\n')

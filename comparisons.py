@@ -1,47 +1,52 @@
-import matplotlib.pyplot as plt
-from matplotlib.pyplot import figure
 from GradientDescent import GradientDescent
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 
-fig = figure(figsize=(20, 15), dpi=80)
-fig.add_subplot(321)
+fig = make_subplots(rows=3, cols=2, horizontal_spacing=0.05, vertical_spacing=0.05, subplot_titles=("Learning rate of 0.1", "Iterations : 1000", "Learning rate of 0.01", "Iterations : 3000", "Learning rate of 0.001", "Iterations : 6000",),
+                                    specs=[[{"secondary_y": False}, {"secondary_y": True}],
+                                            [{"secondary_y":False}, {"secondary_y": True}],
+                                            [{"secondary_y":False}, {"secondary_y": True}]])
 
 learn = GradientDescent('files/data.csv', iterations=1000, learningRate=0.1)
 learn.doGradientDescent()
 
-print(f'\ntheta0 = {learn.theta0} and theta1 = {learn.theta1}\n')
+fig.add_trace(go.Scatter(x=learn.normalizedX, y=learn.normalizedY, mode='markers'), row=1, col=1)
+for i in range(len(learn.theta0History)):
+    if(i <= 500 or (i > 500 and i % 50 == 0)):
+        fig.add_trace(go.Scatter(x=learn.normalizedX, y=learn.estimatePrice(learn.normalizedX, learn.theta0History[i], learn.theta1History[i])), row=1, col=1)
 
-plt.title('Learning rate of 0.1')
-plt.plot(learn.normalizedX, learn.normalizedY, 'bo')
-
-fig.add_subplot(322)
-plt.title('Iteration : 1000')
-plt.plot(learn.costHistory)
+fig.add_trace(go.Scatter(y=learn.costHistory), row=1, col=2, secondary_y=False)
+fig.add_trace(go.Scatter(y=learn.theta0History), row=1, col=2, secondary_y=True)
+fig.add_trace(go.Scatter(y=learn.theta1History), row=1, col=2, secondary_y=True)
 
 del learn
 
-fig.add_subplot(323)
 learn = GradientDescent('files/data.csv', iterations=3000, learningRate=0.01)
 learn.doGradientDescent()
 
-plt.title('Learning rate of 0.01')
-plt.plot(learn.normalizedX, learn.normalizedY, 'bo')
+fig.add_trace(go.Scatter(x=learn.normalizedX, y=learn.normalizedY, mode='markers'), row=2, col=1)
+for i in range(len(learn.theta0History)):
+    if(i <= 500 or (i > 500 and i % 10 == 0)):
+        fig.add_trace(go.Scatter(x=learn.normalizedX, y=learn.estimatePrice(learn.normalizedX, learn.theta0History[i], learn.theta1History[i])), row=2, col=1)
 
-fig.add_subplot(324)
-plt.title('Iteration : 3000')
-plt.plot(learn.costHistory)
+fig.add_trace(go.Scatter(y=learn.costHistory), row=2, col=2, secondary_y=False)
+fig.add_trace(go.Scatter(y=learn.theta0History), row=2, col=2, secondary_y=True)
+fig.add_trace(go.Scatter(y=learn.theta1History), row=2, col=2, secondary_y=True)
 
 del learn
 
-fig.add_subplot(325)
 learn = GradientDescent('files/data.csv', iterations=6000, learningRate=0.001)
 learn.doGradientDescent()
 
-plt.title('Learning rate of 0.001')
-plt.plot(learn.normalizedX, learn.normalizedY, 'bo')
+fig.add_trace(go.Scatter(x=learn.normalizedX, y=learn.normalizedY, mode='markers'), row=3, col=1)
+for i in range(len(learn.theta0History)):
+    if(i <= 500 or (i > 500 and i % 10 == 0)):
+        fig.add_trace(go.Scatter(x=learn.normalizedX, y=learn.estimatePrice(learn.normalizedX, learn.theta0History[i], learn.theta1History[i])), row=3, col=1)
 
-fig.add_subplot(326)
-plt.title('Iteration : 6000')
-plt.plot(learn.costHistory)
+fig.add_trace(go.Scatter(y=learn.costHistory), row=3, col=2, secondary_y=False)
+fig.add_trace(go.Scatter(y=learn.theta0History), row=3, col=2, secondary_y=True)
+fig.add_trace(go.Scatter(y=learn.theta1History), row=3, col=2, secondary_y=True)
 
+fig.update_layout(showlegend=False)
 
-plt.show()
+fig.show()
