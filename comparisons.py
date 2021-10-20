@@ -2,7 +2,7 @@ from GradientDescent import GradientDescent
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
-fig = make_subplots(rows=3, cols=2, horizontal_spacing=0.05, vertical_spacing=0.05, subplot_titles=("Learning rate of 0.1", "Iterations : 1000", "Learning rate of 0.01", "Iterations : 3000", "Learning rate of 0.001", "Iterations : 6000",),
+fig = make_subplots(rows=3, cols=2, horizontal_spacing=0.05, vertical_spacing=0.1, subplot_titles=("Learning rate of 0.1", "Iterations : 1000", "Learning rate of 0.01", "Iterations : 3000", "Learning rate of 0.001", "Iterations : 6000",),
                                     specs=[[{"secondary_y": False}, {"secondary_y": True}],
                                             [{"secondary_y":False}, {"secondary_y": True}],
                                             [{"secondary_y":False}, {"secondary_y": True}]])

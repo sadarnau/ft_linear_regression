@@ -114,7 +114,7 @@ class GradientDescent:
         fig = go.Figure(data=[points, line], frames=frames, layout = layout)
         fig.set_subplots(rows=2, cols=2, specs=[[{}, {}],[{"colspan": 2, "secondary_y": True}, None]],
             subplot_titles=("iterations", "Linear regression applyed to the dataset", 'Values of thetas and cost function over iterations'),
-            horizontal_spacing=0.1, vertical_spacing=0.05)
+            horizontal_spacing=0.1, vertical_spacing=0.1)
 
 
         fig.add_trace(go.Scatter(x=self.x, y=self.y, mode='markers',showlegend=False), row=1, col=2)
@@ -127,7 +127,7 @@ class GradientDescent:
         fig.add_trace(go.Scatter(name="Theta0",y=self.theta0History), row=2, col=1, secondary_y=True)
         fig.add_trace(go.Scatter(name="Theta1",y=self.theta1History), row=2, col=1, secondary_y=True)
         fig.update_xaxes(range=[-10, 2050], row=2, col=1,title_text="Iterations")
-        fig.update_yaxes(title_text="Cost", secondary_y=False)
+        fig.update_yaxes(title_text="Cost", secondary_y=False, row=2, col=1)
         fig.update_yaxes(title_text="Theta value", secondary_y=True)
 
         fig.update_layout(legend=dict( y=0.25, x=0.75))
