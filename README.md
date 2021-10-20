@@ -23,8 +23,8 @@ In [files directory](files/) there are HTML files that can be opened directly fr
 ## Graphs:
 
 ![](files/GradientDescent.png)
-![](files/comparison.png)
 ![](files/steps.gif)
+![](files/comparison.png)
 
 ## Sources :
 
